@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "599803730946",
+    "firebase_url": "https://sharity-f983e-default-rtdb.firebaseio.com",
+    "project_id": "sharity-f983e",
+    "storage_bucket": "sharity-f983e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599803730946:android:4da9650aaf677851831b1b",
+        "android_client_info": {
+          "package_name": "com.capstone.sharity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599803730946-q65rt9phvoj3kf1d9ko85st6cm8682oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBJ_ZZrEVgfKl3MMmobOuc1HFDCWD3sjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599803730946-q65rt9phvoj3kf1d9ko85st6cm8682oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599803730946:android:16301ad6ce60bab5831b1b",
+        "android_client_info": {
+          "package_name": "com.capstone.sharity.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599803730946-q65rt9phvoj3kf1d9ko85st6cm8682oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBJ_ZZrEVgfKl3MMmobOuc1HFDCWD3sjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599803730946-q65rt9phvoj3kf1d9ko85st6cm8682oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

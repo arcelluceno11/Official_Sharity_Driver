@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.capstone.sharity.driver.fragment.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_accountFragment"
+            app:destination="@id/accountFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.capstone.sharity.driver.fragment.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/taskAssignedFragment"
+        android:name="com.capstone.sharity.driver.fragment.TaskAssignedFragment"
+        android:label="fragment_task_assigned"
+        tools:layout="@layout/fragment_task_assigned" />
+    <fragment
+        android:id="@+id/taskHistoryFragment"
+        android:name="com.capstone.sharity.driver.fragment.TaskHistoryFragment"
+        android:label="fragment_task_history"
+        tools:layout="@layout/fragment_task_history" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.capstone.sharity.driver.fragment.NotificationFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.capstone.sharity.driver.fragment.AccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.capstone.sharity.driver.fragment.TaskFragment"
+        android:label="fragment_task"
+        tools:layout="@layout/fragment_task" />
+</navigation>
