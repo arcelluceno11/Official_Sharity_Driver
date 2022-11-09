@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="Notifications"
-        android:id="@+id/mainToolbarNotificationsActivity"
-        android:icon="@drawable/ic_outline_notifications"
-        app:showAsAction="ifRoom"
-        app:iconTint="?attr/colorSecondary"/>
     <item android:title="Account"
         android:id="@+id/mainToolbarAccountActivity"
         android:icon="@drawable/ic_outline_account"

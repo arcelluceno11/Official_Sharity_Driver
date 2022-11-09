@@ -11,6 +11,8 @@ import android.os.Bundle;
 import com.capstone.sharity.driver.R;
 import com.capstone.sharity.driver.viewmodel.DriverViewModel;
 
+import io.teliver.sdk.core.Teliver;
+
 public class MainActivity extends AppCompatActivity {
 
     //Variables
@@ -31,5 +33,6 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION
                 },
                 1);
+
     }
 }

@@ -3,23 +3,34 @@ package com.capstone.sharity.driver.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.capstone.sharity.driver.R;
@@ -37,13 +48,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.MaterialToolbar;
+
+import java.util.Objects;
+
+import io.teliver.sdk.models.Customer;
 
 public class TaskFragment extends Fragment implements OnMapReadyCallback {
 
     //Variables
+    DriverViewModel driverViewModel;
     MapView mapView;
     Location lastKnownLocation;
     FusedLocationProviderClient fusedLocationClient;
+    Customer customer;
+    String address;
+    Double latitude, longitude;
+    CardView cardViewButtons;
+    LinearLayout linearLayoutStart, linearLayoutComplete, linearLayoutPickUp;
+    TextView textViewTime, textViewName, textViewType, textViewAddress, textViewOrderID;
+    ImageButton imgBtnCall, imgBtnDirection;
+    Button btnStart, btnPickUp,  btnComplete;
     private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDrQnBzhOFfjrIqmOUabkt14wvx-LVnzug";
 
     @Override
@@ -57,6 +82,17 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Toolbar
+        NavController navControllerContact = Navigation.findNavController(view);
+        MaterialToolbar materialToolbarBulkContact = view.findViewById(R.id.materialToolbarTask);
+        AppBarConfiguration appBarConfigurationBulkContact = new AppBarConfiguration.Builder().setFallbackOnNavigateUpListener(new AppBarConfiguration.OnNavigateUpListener() {
+            @Override
+            public boolean onNavigateUp() {
+                return false;
+            }
+        }).build();
+        NavigationUI.setupWithNavController(materialToolbarBulkContact, navControllerContact, appBarConfigurationBulkContact);
+
         //Initialize Map
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
@@ -65,6 +101,104 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
+
+        //Initialize Widgets
+        cardViewButtons = view.findViewById(R.id.cardViewButtons);
+        linearLayoutStart = view.findViewById(R.id.linearLayoutStart);
+        linearLayoutPickUp = view.findViewById(R.id.linearLayoutPickUp);
+        linearLayoutComplete = view.findViewById(R.id.linearLayoutComplete);
+        textViewOrderID = view.findViewById(R.id.textViewOrderID);
+        textViewTime = view.findViewById(R.id.textViewTime);
+        textViewName = view.findViewById(R.id.textViewName);
+        textViewType = view.findViewById(R.id.textViewType);
+        textViewAddress = view.findViewById(R.id.textViewAddress);
+        imgBtnCall = view.findViewById(R.id.imgBtnCall);
+        imgBtnDirection = view.findViewById(R.id.imgBtnDirection);
+        btnStart = view.findViewById(R.id.btnStart);
+        btnPickUp = view.findViewById(R.id.btnPickUp);
+        btnComplete = view.findViewById(R.id.btnComplete);
+
+        //Initialize ViewModel
+        driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
+
+        //Check Status
+        if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")){
+            linearLayoutStart.setVisibility(View.GONE);
+            linearLayoutPickUp.setVisibility(View.GONE);
+            linearLayoutComplete.setVisibility(View.GONE);
+        } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "in_progress")) {
+            linearLayoutStart.setVisibility(View.GONE);
+        }
+
+        //Get Task Details
+        if(Objects.equals(driverViewModel.taskSelected.getValue().getType(), "1")){
+            customer = driverViewModel.taskSelected.getValue().getPickUp().getCustomer();
+            address = driverViewModel.taskSelected.getValue().getPickUp().getAddress();
+            longitude = driverViewModel.taskSelected.getValue().getPickUp().getLatLongs().get(0);
+            latitude = driverViewModel.taskSelected.getValue().getPickUp().getLatLongs().get(1);
+        } else {
+            linearLayoutPickUp.setVisibility(View.GONE);
+            customer = driverViewModel.taskSelected.getValue().getDrop().getCustomer();
+            address = driverViewModel.taskSelected.getValue().getDrop().getAddress();
+            longitude = driverViewModel.taskSelected.getValue().getDrop().getLatLongs().get(0);
+            latitude = driverViewModel.taskSelected.getValue().getDrop().getLatLongs().get(1);
+        }
+
+        //Set Details
+        textViewOrderID.setText("Order: " + driverViewModel.taskSelected.getValue().getOrderId());
+        textViewTime.setText(driverViewModel.taskSelected.getValue().getCreatedAt());
+        textViewName.setText(customer.getName());
+        textViewType.setText(Objects.equals(driverViewModel.taskSelected.getValue().getType(), "1") ? "Pick Up" : "Drop Off");
+        textViewAddress.setText(address);
+
+        //Call Donor
+        imgBtnCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + customer.getMobile()));
+                startActivity(intent);
+            }
+        });
+
+        //Open Google Map
+        imgBtnDirection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            }
+        });
+
+        //Start the Trip
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayoutStart.setVisibility(View.GONE);
+                driverViewModel.startTask(driverViewModel.taskSelected.getValue().getTaskId());
+            }
+        });
+
+        //Complete PickUp
+        btnPickUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayoutPickUp.setVisibility(View.GONE);
+                driverViewModel.completePickUpTask(driverViewModel.taskSelected.getValue().getTaskId());
+            }
+        });
+
+        //Complete the Trip
+        btnComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayoutComplete.setVisibility(View.GONE);
+                driverViewModel.completeTask(driverViewModel.taskSelected.getValue().getTaskId());
+            }
+        });
+
     }
 
     @Override
@@ -83,7 +217,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map) {
-        //Initialize Map Function
+        //Initialize Map Functions
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
@@ -113,14 +247,14 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
                         //Task Location
                         map.animateCamera(CameraUpdateFactory.newCameraPosition(
                                 new CameraPosition.Builder()
-                                        .target(new LatLng(10.309637500949279, 123.8932628883152))      // Sets the center of the map to Mountain View
+                                        .target(new LatLng(latitude, longitude))
                                         .zoom(15)
                                         .bearing(90)
                                         .tilt(30)
                                         .build()));
 
                         //Add Marker
-                        map.addMarker(new MarkerOptions().position(new LatLng(10.309637500949279, 123.8932628883152)).title("Marker"));
+                        map.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(address));
                     }
                 }
             }

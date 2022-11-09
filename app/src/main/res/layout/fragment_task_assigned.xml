@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".fragment.TaskAssignedFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerViewTasks"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewTasks"
+        app:layout_constraintStart_toStartOf="@+id/recyclerViewTasks"
+        app:layout_constraintTop_toTopOf="@+id/recyclerViewTasks" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTasks"
         android:layout_width="match_parent"
@@ -19,4 +29,5 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

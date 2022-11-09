@@ -42,13 +42,17 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.2'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
     implementation 'androidx.navigation:navigation-ui:2.5.2'
-    implementation 'com.google.firebase:firebase-messaging:23.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Teliver
     implementation 'io.teliver.sdk:TeliverSdk:4.0.9'
+
+    //Firebase
+    implementation 'com.google.firebase:firebase-database:20.0.6'
+    implementation 'com.google.firebase:firebase-auth:21.0.8'
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
 
     //Maps SDK
     implementation 'com.google.android.gms:play-services-maps:18.1.0'

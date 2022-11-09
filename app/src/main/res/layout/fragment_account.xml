@@ -54,7 +54,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switchAvailability"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,6 +63,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
@@ -100,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Driver ID:"
+                android:text="Code:"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -172,7 +173,7 @@
                 app:layout_constraintStart_toStartOf="@+id/textViewPhoneNum" />
 
             <TextView
-                android:id="@+id/textViewDriverID"
+                android:id="@+id/textViewCode"
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -188,7 +189,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="LOGOUT"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2"
-        tools:layout_editor_absoluteX="148dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
