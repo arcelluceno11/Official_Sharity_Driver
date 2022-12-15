@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.os.StrictMode;
 
 import com.capstone.sharity.driver.R;
 import com.capstone.sharity.driver.viewmodel.DriverViewModel;
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION
                 },
                 1);
+
+        //IDK WHAT'S THIS
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
     }
 }

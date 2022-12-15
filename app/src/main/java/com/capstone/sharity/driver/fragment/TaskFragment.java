@@ -24,6 +24,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +37,8 @@ import android.widget.Toast;
 
 import com.capstone.sharity.driver.R;
 import com.capstone.sharity.driver.viewmodel.DriverViewModel;
+import com.example.swipebutton_library.OnActiveListener;
+import com.example.swipebutton_library.SwipeButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,6 +48,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -68,7 +73,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
     LinearLayout linearLayoutStart, linearLayoutComplete, linearLayoutPickUp;
     TextView textViewTime, textViewName, textViewType, textViewAddress, textViewOrderID;
     ImageButton imgBtnCall, imgBtnDirection;
-    Button btnStart, btnPickUp,  btnComplete;
+    SwipeButton swipeStart, swipePickUp,  swipeComplete;
     private static final String MAPVIEW_BUNDLE_KEY = "AIzaSyDrQnBzhOFfjrIqmOUabkt14wvx-LVnzug";
 
     @Override
@@ -78,6 +83,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         return inflater.inflate(R.layout.fragment_task, container, false);
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -92,6 +98,9 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
             }
         }).build();
         NavigationUI.setupWithNavController(materialToolbarBulkContact, navControllerContact, appBarConfigurationBulkContact);
+
+        //Initialize System Services
+        Vibrator vibrator = (Vibrator) requireActivity().getSystemService(Context.VIBRATOR_SERVICE);
 
         //Initialize Map
         Bundle mapViewBundle = null;
@@ -114,20 +123,26 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         textViewAddress = view.findViewById(R.id.textViewAddress);
         imgBtnCall = view.findViewById(R.id.imgBtnCall);
         imgBtnDirection = view.findViewById(R.id.imgBtnDirection);
-        btnStart = view.findViewById(R.id.btnStart);
-        btnPickUp = view.findViewById(R.id.btnPickUp);
-        btnComplete = view.findViewById(R.id.btnComplete);
+        swipeStart = view.findViewById(R.id.swipeStart);
+        swipePickUp = view.findViewById(R.id.swipePickUp);
+        swipeComplete = view.findViewById(R.id.swipeComplete);
 
         //Initialize ViewModel
         driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
 
         //Check Status
-        if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")){
-            linearLayoutStart.setVisibility(View.GONE);
+        if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "assigned")){
+            linearLayoutStart.setVisibility(View.VISIBLE);
             linearLayoutPickUp.setVisibility(View.GONE);
             linearLayoutComplete.setVisibility(View.GONE);
         } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "in_progress")) {
             linearLayoutStart.setVisibility(View.GONE);
+            linearLayoutPickUp.setVisibility(View.VISIBLE);
+            linearLayoutComplete.setVisibility(View.GONE);
+        } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "complete")) {
+            linearLayoutStart.setVisibility(View.GONE);
+            linearLayoutPickUp.setVisibility(View.GONE);
+            linearLayoutComplete.setVisibility(View.GONE);
         }
 
         //Get Task Details
@@ -173,32 +188,46 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         });
 
         //Start the Trip
-        btnStart.setOnClickListener(new View.OnClickListener() {
+        swipeStart.setOnActiveListener(new OnActiveListener() {
             @Override
-            public void onClick(View v) {
+            public void onActive() {
                 linearLayoutStart.setVisibility(View.GONE);
-                driverViewModel.startTask(driverViewModel.taskSelected.getValue().getTaskId());
+                if(Objects.equals(driverViewModel.taskSelected.getValue().getType(), "1")){
+                    linearLayoutPickUp.setVisibility(View.VISIBLE);
+                    linearLayoutComplete.setVisibility(View.GONE);
+                } else {
+                    linearLayoutPickUp.setVisibility(View.GONE);
+                    linearLayoutComplete.setVisibility(View.VISIBLE);
+                }
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                //driverViewModel.startTask(driverViewModel.taskSelected.getValue().getTaskId());
             }
         });
 
         //Complete PickUp
-        btnPickUp.setOnClickListener(new View.OnClickListener() {
+        swipePickUp.setOnActiveListener(new OnActiveListener() {
             @Override
-            public void onClick(View v) {
+            public void onActive() {
+                linearLayoutStart.setVisibility(View.GONE);
                 linearLayoutPickUp.setVisibility(View.GONE);
-                driverViewModel.completePickUpTask(driverViewModel.taskSelected.getValue().getTaskId());
+                linearLayoutComplete.setVisibility(View.VISIBLE);
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                //driverViewModel.completePickUpTask(driverViewModel.taskSelected.getValue().getTaskId());
             }
         });
 
         //Complete the Trip
-        btnComplete.setOnClickListener(new View.OnClickListener() {
+        swipeComplete.setOnActiveListener(new OnActiveListener() {
             @Override
-            public void onClick(View v) {
+            public void onActive() {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
                 linearLayoutComplete.setVisibility(View.GONE);
-                driverViewModel.completeTask(driverViewModel.taskSelected.getValue().getTaskId());
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+
+                //driverViewModel.completeTask(driverViewModel.taskSelected.getValue().getTaskId());
             }
         });
-
     }
 
     @Override
@@ -214,10 +243,12 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         mapView.onSaveInstanceState(mapViewBundle);
     }
 
+
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map) {
         //Initialize Map Functions
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style));
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override

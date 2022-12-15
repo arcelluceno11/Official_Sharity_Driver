@@ -36,7 +36,6 @@ public class AccountFragment extends Fragment {
 
     //Variables
     DriverViewModel driverViewModel;
-    SwitchMaterial switchAvailability;
     TextView textViewCode, textViewName, textViewPhoneNum, textViewEmailAddress, textViewAvailability;
     Button btnLogout;
 
@@ -64,12 +63,10 @@ public class AccountFragment extends Fragment {
         NavigationUI.setupWithNavController(materialToolbarBulkContact, navControllerContact, appBarConfigurationBulkContact);
 
         //Initialize Widgets
-        switchAvailability = view.findViewById(R.id.switchAvailability);
         textViewCode = view.findViewById(R.id.textViewCode);
         textViewName = view.findViewById(R.id.textViewName);
         textViewPhoneNum = view.findViewById(R.id.textViewPhoneNum);
         textViewEmailAddress = view.findViewById(R.id.textViewEmailAddress);
-        textViewAvailability = view.findViewById(R.id.textViewAvailability);
         btnLogout = view.findViewById(R.id.btnLogout);
 
         //Initialize ViewModel
@@ -79,19 +76,10 @@ public class AccountFragment extends Fragment {
         driverViewModel.driver.observe(requireActivity(), new Observer<Driver>() {
             @Override
             public void onChanged(Driver driver) {
-                switchAvailability.setChecked(Objects.equals(driver.getStatus(), "Available"));
                 textViewCode.setText(driver.getCode());
                 textViewName.setText(driver.getFirstName() + " " + driverViewModel.driver.getValue().getMiddleName() + " " + driverViewModel.driver.getValue().getLastName());
                 textViewPhoneNum.setText(driver.getPhone());
                 textViewEmailAddress.setText(driver.getEmail());
-                textViewAvailability.setText(driver.getStatus());
-            }
-        });
-
-        switchAvailability.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                driverViewModel.setAvailability(isChecked);
             }
         });
 
@@ -106,7 +94,7 @@ public class AccountFragment extends Fragment {
                 editor.apply();
 
                 //Set Driver Availability
-                driverViewModel.setAvailability(false);
+                driverViewModel.unsubscribeUpdates();
 
                 //Navigate
                 NavDirections action = AccountFragmentDirections.actionAccountFragmentToLoginFragment2();

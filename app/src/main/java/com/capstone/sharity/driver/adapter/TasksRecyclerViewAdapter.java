@@ -77,8 +77,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             textViewStatus.setText(task.getStatus());
             textViewType.setText(Objects.equals(task.getType(), "1") ? "P" : "D");
             textViewTime.setText(task.getUpdatedAt());
-            textViewName.setText(task.getPickUp().getCustomer().getName());
-            textviewAddress.setText(task.getPickUp().getAddress());
+            textViewName.setText(Objects.equals(task.getType(), "1") ? task.getPickUp().getCustomer().getName() : task.getDrop().getCustomer().getName());
+            textviewAddress.setText(Objects.equals(task.getType(), "1") ? task.getPickUp().getAddress() : task.getDrop().getAddress());
             btnView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

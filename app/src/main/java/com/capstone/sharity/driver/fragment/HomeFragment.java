@@ -5,14 +5,17 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.capstone.sharity.driver.R;
 import com.capstone.sharity.driver.adapter.TaskViewPagerAdapter;
@@ -25,7 +28,6 @@ import java.util.List;
 import java.util.Objects;
 
 import io.teliver.sdk.core.TLog;
-import io.teliver.sdk.core.TaskListListener;
 import io.teliver.sdk.core.Teliver;
 import io.teliver.sdk.models.Task;
 import io.teliver.sdk.models.UserBuilder;
@@ -37,6 +39,7 @@ public class HomeFragment extends Fragment {
     MaterialToolbar materialToolbar;
     TabLayout tabLayout;
     ViewPager2 viewPager;
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,12 +56,26 @@ public class HomeFragment extends Fragment {
         materialToolbar = view.findViewById(R.id.materialToolbar);
         tabLayout = view.findViewById(R.id.tabLayoutTask);
         viewPager = view.findViewById(R.id.viewPagerTask);
+        progressBar = view.findViewById(R.id.progressBar);
+
+        //Initialize ViewModel
+        driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
+        driverViewModel.getDriverDetails();
+        driverViewModel.setAvailability();
+        driverViewModel.subscribeUpdates();
+        driverViewModel.getTasks();
+        driverViewModel.getTasksHistory();
 
         //Toolbar
         materialToolbar.inflateMenu(R.menu.main_toolbar_menu);
         materialToolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
-                case R.id.mainToolbarAccountActivity:
+                case R.id.mainToolbarRefresh:
+                    progressBar.setVisibility(View.VISIBLE);
+                    driverViewModel.getTasks();
+                    driverViewModel.getTasksHistory();
+                    break;
+                case R.id.mainToolbarAccount:
                     NavDirections accountFragment = HomeFragmentDirections.actionHomeFragmentToAccountFragment();
                     Navigation.findNavController(view).navigate(accountFragment);
                     break;
@@ -76,14 +93,13 @@ public class HomeFragment extends Fragment {
                 (tab, position) -> tab.setText(position == 0 ? "Assigned" : "History")
         ).attach();
 
-        //Initialize Teliver
-        Teliver.init(requireContext(), "7537696e87db9f4ffb2c9e28a5fd51ea");
-        Teliver.identifyUser(new UserBuilder("083996").setUserType(UserBuilder.USER_TYPE.OPERATOR).registerPush().build());
-        TLog.setVisible(true);
-
-        //Initialize ViewModel
-        driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
-        driverViewModel.getDriverDetails();
-        driverViewModel.setAvailability(Objects.equals(driverViewModel.driver.getValue().getStatus(), "Available"));
+        //Refresh Values
+        driverViewModel.driverTasks.observe(requireActivity(), new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                progressBar.setVisibility(View.GONE);
+                Log.d("Log Debug:", "Refresh Values");
+            }
+        });
     }
 }

@@ -2,9 +2,11 @@ package com.capstone.sharity.driver.viewmodel;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -24,7 +26,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,22 +93,19 @@ public class DriverViewModel extends ViewModel {
             }
         });
     }
-    public void setAvailability(Boolean value){
+    public void setAvailability(){
         String status = "Available";
 
-        if(!value) {
-            status = "Unavailable";
-        }
-
+        //Update Availability in Realtime Database
         Firebase.getDatabaseReference()
                 .child("Drivers")
                 .child(driverCode.getValue())
                 .child("status")
                 .setValue(status);
-        Teliver.updateDriverAvailability(value);
     }
     public void startTask(String taskId) {
 
+        //Accept Task
         Teliver.acceptTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
@@ -117,6 +119,7 @@ public class DriverViewModel extends ViewModel {
 
         });
 
+        //Start Task
         Teliver.startTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
@@ -129,18 +132,6 @@ public class DriverViewModel extends ViewModel {
             }
         });
 
-        //Start Teliver Trip
-        TripBuilder tripBuilder = new TripBuilder(taskSelected.getValue().getOrderId());
-
-        /*
-        PushData pushData = new PushData(taskSelected.getValue().getNotes());
-        pushData.setMessage("Your Order: " + taskSelected.getValue().getOrderId() + "is On the Way!");
-        pushData.setPayload();
-        tripBuilder.withUserPushObject(pushData);
-         */
-
-        Teliver.startTrip(tripBuilder.build());
-
         //Update Order Status
         Firebase.getDatabaseReference()
                 .child(Objects.equals(taskSelected.getValue().getType(), "1") ? "Donations" : "Purchases")
@@ -151,7 +142,7 @@ public class DriverViewModel extends ViewModel {
                             if (Objects.equals(postSnapshot.child("id").getValue(String.class), taskSelected.getValue().getOrderId())) {
                                 Firebase.getDatabaseReference()
                                         .child(Objects.equals(taskSelected.getValue().getType(), "1") ? "Donations" : "Purchases")
-                                        .child(postSnapshot.child("id").getValue(String.class))
+                                        .child(taskSelected.getValue().getOrderId())
                                         .child("status")
                                         .setValue("On the Way");
                             }
@@ -164,9 +155,20 @@ public class DriverViewModel extends ViewModel {
                     }
                 });
 
+        //Start Trip
+        Teliver.startTrip(new TripBuilder(taskSelected.getValue().getOrderId()).build());
+
+        //Send Notification
+        try {
+            Firebase.sendNotification(taskSelected.getValue().getNotes(), taskSelected.getValue().getOrderId() + " is On the Way!", "Track here", "On the Way", taskSelected.getValue().getOrderId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
     public void completeTask(String taskId) {
+
+        //Complete Task
         Teliver.completeTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
@@ -180,8 +182,6 @@ public class DriverViewModel extends ViewModel {
             }
         });
 
-        Teliver.stopTrip(taskSelected.getValue().getOrderId());
-
         //Update Order Status
         Firebase.getDatabaseReference()
                 .child(Objects.equals(taskSelected.getValue().getType(), "1") ? "Donations" : "Purchases")
@@ -192,7 +192,7 @@ public class DriverViewModel extends ViewModel {
                             if (Objects.equals(postSnapshot.child("id").getValue(String.class), taskSelected.getValue().getOrderId())) {
                                 Firebase.getDatabaseReference()
                                         .child(Objects.equals(taskSelected.getValue().getType(), "1") ? "Donations" : "Purchases")
-                                        .child(postSnapshot.child("id").getValue(String.class))
+                                        .child(taskSelected.getValue().getOrderId())
                                         .child("status")
                                         .setValue(Objects.equals(taskSelected.getValue().getType(), "1") ? "Complete" : "Delivered");
                             }
@@ -204,8 +204,20 @@ public class DriverViewModel extends ViewModel {
 
                     }
                 });
+
+        //Stop Trip
+        Teliver.stopTrip(taskSelected.getValue().getOrderId());
+
+        //Send Notification
+        try {
+            Firebase.sendNotification(taskSelected.getValue().getNotes(), taskSelected.getValue().getOrderId() + " is Complete", "", Objects.equals(taskSelected.getValue().getType(), "1") ? "Complete" : "Delivered" , taskSelected.getValue().getOrderId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public void completePickUpTask(String taskId){
+
+        //Complete Pick Up Task
         Teliver.completePickupTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
@@ -228,7 +240,7 @@ public class DriverViewModel extends ViewModel {
                             if (Objects.equals(postSnapshot.child("id").getValue(String.class), taskSelected.getValue().getOrderId())) {
                                 Firebase.getDatabaseReference()
                                         .child("Donations")
-                                        .child(postSnapshot.child("id").getValue(String.class))
+                                        .child(taskSelected.getValue().getOrderId())
                                         .child("status")
                                         .setValue("Picked Up");
                             }
@@ -240,5 +252,18 @@ public class DriverViewModel extends ViewModel {
 
                     }
                 });
+
+        //Send Notification
+        try {
+            Firebase.sendNotification(taskSelected.getValue().getNotes(), taskSelected.getValue().getOrderId() + " is Picked", "Track here", "Picked Up", taskSelected.getValue().getOrderId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void subscribeUpdates(){
+        FirebaseMessaging.getInstance().subscribeToTopic(driverCode.getValue());
+    }
+    public void unsubscribeUpdates(){
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(driverCode.getValue());
     }
 }

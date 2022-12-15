@@ -2,8 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:title="Refresh"
+        android:id="@+id/mainToolbarRefresh"
+        android:icon="@drawable/ic_baseline_refresh_24"
+        app:showAsAction="ifRoom"
+        app:iconTint="?attr/colorSecondary"/>
+
     <item android:title="Account"
-        android:id="@+id/mainToolbarAccountActivity"
+        android:id="@+id/mainToolbarAccount"
         android:icon="@drawable/ic_outline_account"
         app:showAsAction="ifRoom"
         app:iconTint="?attr/colorSecondary"/>

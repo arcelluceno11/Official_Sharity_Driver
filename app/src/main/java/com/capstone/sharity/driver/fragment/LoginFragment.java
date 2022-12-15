@@ -7,10 +7,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +21,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.capstone.sharity.driver.R;
+import com.capstone.sharity.driver.model.Driver;
 import com.capstone.sharity.driver.repository.Firebase;
 import com.capstone.sharity.driver.viewmodel.DriverViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import io.teliver.sdk.core.TLog;
+import io.teliver.sdk.core.Teliver;
+import io.teliver.sdk.models.Task;
+import io.teliver.sdk.models.UserBuilder;
 
 public class LoginFragment extends Fragment {
 
@@ -51,15 +61,23 @@ public class LoginFragment extends Fragment {
         editTextLoginCode = view.findViewById(R.id.editTextLoginCode);
         btnLogin = view.findViewById(R.id.btnLogin);
 
+        //Initialize Teliver
+        Teliver.init(requireContext(), "3e02ba274b5fee70ce4405e618dd3117");
+
         //ViewModel Initialization
         driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
 
         //Session Initialization
         sharedpreferences = requireContext().getSharedPreferences("Driver", Context.MODE_PRIVATE);
+
+        //Check if Already Login
         code = sharedpreferences.getString("code", null);
         if (code != null) {
-            //Set ViewModel driverCode
+            //Set ViewModel
             driverViewModel.driverCode.setValue(code);
+
+            //Identify Teliver User
+            Teliver.identifyUser(new UserBuilder(driverViewModel.driverCode.getValue()).setUserType(UserBuilder.USER_TYPE.OPERATOR).registerPush().build());
 
             NavDirections action = LoginFragmentDirections.actionLoginFragmentToHomeFragment();
             Navigation.findNavController(view).navigate(action);
@@ -73,25 +91,34 @@ public class LoginFragment extends Fragment {
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<Driver> tempDrivers = new ArrayList<>();
+
                                 //Iterate Donations
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                                    if (Objects.equals(postSnapshot.getKey(), editTextLoginCode.getText().toString())) {
-                                        Toast.makeText(requireContext(), "Login successfully!", Toast.LENGTH_SHORT).show();
+                                    tempDrivers.add(postSnapshot.getValue(Driver.class));
+                                }
 
-                                        //Set ViewModel driverCode
-                                        driverViewModel.driverCode.setValue(editTextLoginCode.getText().toString());
+                                //Check if Code Exist
+                                if(tempDrivers.stream().anyMatch(x -> x.getCode().equals(editTextLoginCode.getText().toString()))){
+                                    Toast.makeText(requireContext(), "Login successfully!", Toast.LENGTH_SHORT).show();
 
-                                        //Session Save
-                                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                                        editor.putString("code", editTextLoginCode.getText().toString());
-                                        editor.apply();
+                                    //Set ViewModel
+                                    driverViewModel.driverCode.setValue(editTextLoginCode.getText().toString());
 
-                                        //Navigate
-                                        NavDirections action = LoginFragmentDirections.actionLoginFragmentToHomeFragment();
-                                        Navigation.findNavController(view).navigate(action);
-                                    } else {
-                                        Toast.makeText(requireContext(), "Code does'nt exist!", Toast.LENGTH_SHORT).show();
-                                    }
+                                    //Identify Teliver User
+                                    Teliver.identifyUser(new UserBuilder(driverViewModel.driverCode.getValue()).setUserType(UserBuilder.USER_TYPE.OPERATOR).registerPush().build());
+
+                                    //Session Save
+                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                                    editor.putString("code", editTextLoginCode.getText().toString());
+                                    editor.apply();
+
+                                    //Navigate
+                                    NavDirections action = LoginFragmentDirections.actionLoginFragmentToHomeFragment();
+                                    Navigation.findNavController(view).navigate(action);
+
+                                } else {
+                                    Toast.makeText(requireContext(), "Code doesn't exist!", Toast.LENGTH_SHORT).show();
                                 }
                             }
 

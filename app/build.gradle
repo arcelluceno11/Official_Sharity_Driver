@@ -56,4 +56,10 @@ dependencies {
 
     //Maps SDK
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+    //OkHTTP
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+
+    //Swipe Button
+    implementation 'com.github.mhdmoh:swipe-button:1.0.3'
 }

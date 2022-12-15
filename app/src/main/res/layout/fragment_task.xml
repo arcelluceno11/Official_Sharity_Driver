@@ -57,24 +57,38 @@
                 android:id="@+id/linearLayoutComplete"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="8dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <Button
-                    android:id="@+id/btnComplete"
-                    android:layout_width="wrap_content"
+                <com.example.swipebutton_library.SwipeButton
+                    android:id="@+id/swipeComplete"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:text="COMPLETE"
-                    tools:ignore="DuplicateClickableBoundsCheck" />
+                    android:layout_margin="8dp"
+                    app:button_background_drawable="@drawable/round_button_background"
+                    app:button_background_padding="12dp"
+                    app:button_background_src="@drawable/ic_baseline_arrow_forward_ios_24"
+                    app:button_background_tint="@color/md_theme_light_primary"
+                    app:button_height="48dp"
+                    app:button_width="48dp"
+                    app:has_active_status="false"
+                    app:has_finish_animation="true"
+                    app:inner_text="COMPLETE"
+                    app:inner_text_color="@color/md_theme_light_primary"
+                    app:inner_text_gravity="center"
+                    app:inner_text_size="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:outer_background_drawable="@drawable/round_outer_background"
+                    app:outer_background_height="44dp"
+                    app:outer_background_tint="@color/md_theme_light_primaryContainer"
+                    app:trail_background_tint="@color/md_theme_light_primary"
+                    app:trail_enabled="true" />
 
             </LinearLayout>
 
@@ -82,24 +96,38 @@
                 android:id="@+id/linearLayoutPickUp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="8dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayoutComplete">
 
-                <Button
-                    android:id="@+id/btnPickUp"
-                    android:layout_width="wrap_content"
+                <com.example.swipebutton_library.SwipeButton
+                    android:id="@+id/swipePickUp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:text="PICKED UP"
-                    tools:ignore="DuplicateClickableBoundsCheck" />
+                    android:layout_margin="8dp"
+                    app:button_background_drawable="@drawable/round_button_background"
+                    app:button_background_padding="12dp"
+                    app:button_background_src="@drawable/ic_baseline_arrow_forward_ios_24"
+                    app:button_background_tint="@color/md_theme_light_primary"
+                    app:button_height="48dp"
+                    app:button_width="48dp"
+                    app:has_active_status="false"
+                    app:has_finish_animation="true"
+                    app:inner_text="PICKED UP"
+                    app:inner_text_color="@color/md_theme_light_primary"
+                    app:inner_text_gravity="center"
+                    app:inner_text_size="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:outer_background_drawable="@drawable/round_outer_background"
+                    app:outer_background_height="44dp"
+                    app:outer_background_tint="@color/md_theme_light_primaryContainer"
+                    app:trail_background_tint="@color/md_theme_light_primary"
+                    app:trail_enabled="true" />
 
             </LinearLayout>
 
@@ -107,24 +135,38 @@
                 android:id="@+id/linearLayoutStart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="8dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayoutPickUp">
 
-                <Button
-                    android:id="@+id/btnStart"
-                    android:layout_width="wrap_content"
+                <com.example.swipebutton_library.SwipeButton
+                    android:id="@+id/swipeStart"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:text="START" />
-
+                    android:layout_margin="8dp"
+                    app:button_background_drawable="@drawable/round_button_background"
+                    app:button_background_padding="12dp"
+                    app:button_background_src="@drawable/ic_baseline_arrow_forward_ios_24"
+                    app:button_background_tint="@color/md_theme_light_primary"
+                    app:button_height="48dp"
+                    app:button_width="48dp"
+                    app:has_active_status="false"
+                    app:has_finish_animation="true"
+                    app:inner_text="START"
+                    app:inner_text_color="@color/md_theme_light_primary"
+                    app:inner_text_gravity="center"
+                    app:inner_text_size="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:outer_background_drawable="@drawable/round_outer_background"
+                    app:outer_background_height="44dp"
+                    app:outer_background_tint="@color/md_theme_light_primaryContainer"
+                    app:trail_background_tint="@color/md_theme_light_primary"
+                    app:trail_enabled="true" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

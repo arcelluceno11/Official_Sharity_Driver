@@ -6,9 +6,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.capstone.sharity.driver.R;
 import com.capstone.sharity.driver.activity.MainActivity;
@@ -22,7 +25,6 @@ import io.teliver.sdk.core.Teliver;
 import io.teliver.sdk.models.NotificationData;
 import io.teliver.sdk.models.TConstants;
 import io.teliver.sdk.models.Task;
-import io.teliver.sdk.models.TrackingBuilder;
 
 public class MyFirebaseMessageService extends FirebaseMessagingService {
 
@@ -30,42 +32,33 @@ public class MyFirebaseMessageService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
 
-        try {
-            if (Teliver.isTeliverPush(message)) {
-                Map<String, String> pushData = message.getData();
-                NotificationData data = new GsonBuilder().create().fromJson(pushData.get("description"),  NotificationData.class);
+        if (message.getNotification() != null) {
 
-                if (data.getCommand().equals(TConstants.TELIVER_ASSIGN_TASK)) {
-                    Task task = new GsonBuilder().create().fromJson(data.getPayload(), Task.class);
+            //Create Notification Channel
+            NotificationChannel channel = new NotificationChannel("Assigned Orders","Assigned Orders", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("To");
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
 
-                    Intent notificationIntent = new Intent(this, MainActivity.class);
-                    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            //Explicit Intent from Notification
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("orderID", message.getData().get("orderID"));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            //Build Notification
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Assigned Orders")
+                    .setSmallIcon(R.drawable.ic_baseline_assignment_turned_in_24)
+                    .setContentTitle(message.getNotification().getTitle())
+                    .setContentText(message.getNotification().getBody())
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
 
-                    NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationChannel channel = new NotificationChannel("Driver", "Driver", NotificationManager.IMPORTANCE_DEFAULT);
-                    channel.setDescription("Driver");
-                    notificationManager.createNotificationChannel(channel);
+            //Show Notification
+            notificationManager.notify(0, builder.build());
 
-                    NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this, "Driver");
-                    notBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
-                    notBuilder.setContentIntent(pendingIntent);
-                    notBuilder.setSmallIcon(R.drawable.ic_baseline_assignment_turned_in_24);
-                    notBuilder.setContentTitle("New Task");
-                    notBuilder.setContentText(task.getType());
-                    notBuilder.setAutoCancel(true);
-                    notBuilder.setOnlyAlertOnce(true);
-                    Notification notification = notBuilder.build();
-                    notification.defaults = Notification.DEFAULT_SOUND;
-                    notification.flags = Notification.FLAG_AUTO_CANCEL;
-
-                    notificationManager.notify(7, notification);
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("TELIVER::", "test");
         }
     }
 }

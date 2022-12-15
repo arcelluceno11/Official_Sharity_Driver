@@ -33,7 +33,6 @@ public class TaskHistoryFragment extends Fragment {
     DriverViewModel driverViewModel;
     RecyclerView recyclerViewHistory;
     TasksRecyclerViewAdapter tasksRecyclerViewAdapter;
-    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,11 +47,9 @@ public class TaskHistoryFragment extends Fragment {
 
         //Initialize Widgets
         recyclerViewHistory = view.findViewById(R.id.recyclerViewHistory);
-        progressBar = view.findViewById(R.id.progressBar);
 
         //ViewModel
         driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
-        driverViewModel.getTasksHistory();
 
         //Populate Tasks
         tasksRecyclerViewAdapter = new TasksRecyclerViewAdapter(requireContext(), driverViewModel.driverTasksHistory.getValue(), new TasksRecyclerViewAdapter.OnItemClickListener() {
@@ -69,27 +66,9 @@ public class TaskHistoryFragment extends Fragment {
         driverViewModel.driverTasksHistory.observe(requireActivity(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                progressBar.setVisibility(View.GONE);
                 tasksRecyclerViewAdapter.setTasksList(tasks);
                 tasksRecyclerViewAdapter.notifyDataSetChanged();
             }
         });
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        driverViewModel.driverTasksHistory.setValue(null);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        progressBar.setVisibility(View.VISIBLE);
-        driverViewModel.getTasksHistory();
-    }
-
-
 }
