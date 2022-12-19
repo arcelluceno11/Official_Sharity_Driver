@@ -38,7 +38,7 @@
             android:value="${MAPS_API_KEY}" />
 
         <service
-            android:name=".repository.MyFirebaseMessageService"
+            android:name=".repository.Notification"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -66,12 +66,15 @@ public class DriverViewModel extends ViewModel {
 
                     }
                 });
+
+        Log.d("Log Debug:", "Driver Details: Success" );
     }
     public void getTasks(){
         Teliver.getMyTaskList("assigned,accepted,in_progress", 1, 0, new TaskListListener() {
             @Override
             public void onSuccess(List<Task> tasks, int total) {
                 driverTasks.setValue(tasks);
+                Log.d("Log Debug:", "Driver Tasks: " + total);
             }
 
             @Override
@@ -85,6 +88,7 @@ public class DriverViewModel extends ViewModel {
             @Override
             public void onSuccess(List<Task> tasks, int total) {
                 driverTasksHistory.setValue(tasks);
+                Log.d("Log Debug:", "Driver History: " + total);
             }
 
             @Override
@@ -102,14 +106,19 @@ public class DriverViewModel extends ViewModel {
                 .child(driverCode.getValue())
                 .child("status")
                 .setValue(status);
+
+        Log.d("Log Debug:", "Driver Available: True");
     }
     public void startTask(String taskId) {
+
+        driverTasks.setValue(null);
+        driverTasksHistory.setValue(null);
 
         //Accept Task
         Teliver.acceptTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
-
+                Log.d("Log Debug:", response);
             }
 
             @Override
@@ -123,12 +132,13 @@ public class DriverViewModel extends ViewModel {
         Teliver.startTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
-
+                getTasks();
+                getTasksHistory();
             }
 
             @Override
             public void onFailure(String reason) {
-
+                Log.d("Log Debug:", reason);
             }
         });
 
@@ -168,17 +178,21 @@ public class DriverViewModel extends ViewModel {
     }
     public void completeTask(String taskId) {
 
+        driverTasks.setValue(null);
+        driverTasksHistory.setValue(null);
+
         //Complete Task
         Teliver.completeTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
-
-
+                Log.d("Log Debug:", response);
+                getTasks();
+                getTasksHistory();
             }
 
             @Override
             public void onFailure(String reason) {
-
+                Log.d("Log Debug:", reason);
             }
         });
 
@@ -217,16 +231,21 @@ public class DriverViewModel extends ViewModel {
     }
     public void completePickUpTask(String taskId){
 
+        driverTasks.setValue(null);
+        driverTasksHistory.setValue(null);
+
         //Complete Pick Up Task
         Teliver.completePickupTask(taskId, new EventListener() {
             @Override
             public void onSuccess(String response) {
-
+                Log.d("Log Debug:", response);
+                getTasks();
+                getTasksHistory();
             }
 
             @Override
             public void onFailure(String reason) {
-
+                Log.d("Log Debug:", reason);
             }
         });
 
@@ -262,8 +281,10 @@ public class DriverViewModel extends ViewModel {
     }
     public void subscribeUpdates(){
         FirebaseMessaging.getInstance().subscribeToTopic(driverCode.getValue());
+        Log.d("Log Debug:", "Driver Subscribed To Topic: " + driverCode.getValue().toString());
     }
     public void unsubscribeUpdates(){
         FirebaseMessaging.getInstance().unsubscribeFromTopic(driverCode.getValue());
+        Log.d("Log Debug:", "Driver Unsubscribed To Topic: " + driverCode.getValue().toString());
     }
 }
