@@ -135,24 +135,43 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
             linearLayoutStart.setVisibility(View.VISIBLE);
             linearLayoutPickUp.setVisibility(View.GONE);
             linearLayoutComplete.setVisibility(View.GONE);
-        } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "in_progress")) {
-            linearLayoutStart.setVisibility(View.GONE);
-            linearLayoutPickUp.setVisibility(View.VISIBLE);
-            linearLayoutComplete.setVisibility(View.GONE);
-        } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "complete")) {
-            linearLayoutStart.setVisibility(View.GONE);
-            linearLayoutPickUp.setVisibility(View.GONE);
-            linearLayoutComplete.setVisibility(View.GONE);
         }
 
         //Get Task Details
         if(Objects.equals(driverViewModel.taskSelected.getValue().getType(), "1")){
+            //Check if PickUp is Complete
+            if(driverViewModel.taskSelected.getValue().getPickUp().isComplete()) {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
+                linearLayoutComplete.setVisibility(View.VISIBLE);
+            } else {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.VISIBLE);
+                linearLayoutComplete.setVisibility(View.GONE);
+            }
+            //Check if Task is Complete
+            if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
+                linearLayoutComplete.setVisibility(View.GONE);
+            }
+            //Assign Values
             customer = driverViewModel.taskSelected.getValue().getPickUp().getCustomer();
             address = driverViewModel.taskSelected.getValue().getPickUp().getAddress();
             longitude = driverViewModel.taskSelected.getValue().getPickUp().getLatLongs().get(0);
             latitude = driverViewModel.taskSelected.getValue().getPickUp().getLatLongs().get(1);
         } else {
-            linearLayoutPickUp.setVisibility(View.GONE);
+            //Check if Task is Complete
+            if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
+                linearLayoutComplete.setVisibility(View.GONE);
+            } else {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
+                linearLayoutComplete.setVisibility(View.VISIBLE);
+            }
+            //Assign Values
             customer = driverViewModel.taskSelected.getValue().getDrop().getCustomer();
             address = driverViewModel.taskSelected.getValue().getDrop().getAddress();
             longitude = driverViewModel.taskSelected.getValue().getDrop().getLatLongs().get(0);
@@ -200,7 +219,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
                     linearLayoutComplete.setVisibility(View.VISIBLE);
                 }
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-                //driverViewModel.startTask(driverViewModel.taskSelected.getValue().getTaskId());
+                driverViewModel.startTask(driverViewModel.taskSelected.getValue().getTaskId());
             }
         });
 
@@ -212,7 +231,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
                 linearLayoutPickUp.setVisibility(View.GONE);
                 linearLayoutComplete.setVisibility(View.VISIBLE);
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-                //driverViewModel.completePickUpTask(driverViewModel.taskSelected.getValue().getTaskId());
+                driverViewModel.completePickUpTask(driverViewModel.taskSelected.getValue().getTaskId());
             }
         });
 
@@ -224,8 +243,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
                 linearLayoutPickUp.setVisibility(View.GONE);
                 linearLayoutComplete.setVisibility(View.GONE);
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-
-                //driverViewModel.completeTask(driverViewModel.taskSelected.getValue().getTaskId());
+                driverViewModel.completeTask(driverViewModel.taskSelected.getValue().getTaskId());
             }
         });
     }

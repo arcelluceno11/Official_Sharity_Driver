@@ -75,6 +75,11 @@ public class LoginFragment extends Fragment {
         if (code != null) {
             //Set ViewModel
             driverViewModel.driverCode.setValue(code);
+            driverViewModel.getDriverDetails();
+            driverViewModel.setAvailability();
+            driverViewModel.subscribeUpdates();
+            driverViewModel.getTasks();
+            driverViewModel.getTasksHistory();
 
             //Identify Teliver User
             Teliver.identifyUser(new UserBuilder(driverViewModel.driverCode.getValue()).setUserType(UserBuilder.USER_TYPE.OPERATOR).registerPush().build());
@@ -104,6 +109,11 @@ public class LoginFragment extends Fragment {
 
                                     //Set ViewModel
                                     driverViewModel.driverCode.setValue(editTextLoginCode.getText().toString());
+                                    driverViewModel.getDriverDetails();
+                                    driverViewModel.setAvailability();
+                                    driverViewModel.subscribeUpdates();
+                                    driverViewModel.getTasks();
+                                    driverViewModel.getTasksHistory();
 
                                     //Identify Teliver User
                                     Teliver.identifyUser(new UserBuilder(driverViewModel.driverCode.getValue()).setUserType(UserBuilder.USER_TYPE.OPERATOR).registerPush().build());

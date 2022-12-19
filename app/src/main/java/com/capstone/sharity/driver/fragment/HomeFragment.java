@@ -60,17 +60,14 @@ public class HomeFragment extends Fragment {
 
         //Initialize ViewModel
         driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
-        driverViewModel.getDriverDetails();
-        driverViewModel.setAvailability();
-        driverViewModel.subscribeUpdates();
-        driverViewModel.getTasks();
-        driverViewModel.getTasksHistory();
 
         //Toolbar
         materialToolbar.inflateMenu(R.menu.main_toolbar_menu);
         materialToolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.mainToolbarRefresh:
+                    driverViewModel.driverTasks.setValue(null);
+                    driverViewModel.driverTasksHistory.setValue(null);
                     progressBar.setVisibility(View.VISIBLE);
                     driverViewModel.getTasks();
                     driverViewModel.getTasksHistory();
@@ -97,8 +94,21 @@ public class HomeFragment extends Fragment {
         driverViewModel.driverTasks.observe(requireActivity(), new Observer<List<Task>>() {
             @Override
             public void onChanged(List<Task> tasks) {
-                progressBar.setVisibility(View.GONE);
-                Log.d("Log Debug:", "Refresh Values");
+                if(tasks == null){
+                    progressBar.setVisibility(View.VISIBLE);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
+        driverViewModel.driverTasksHistory.observe(requireActivity(), new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                if(tasks == null){
+                    progressBar.setVisibility(View.VISIBLE);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         });
     }
