@@ -139,7 +139,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
             linearLayoutStart.setVisibility(View.GONE);
             linearLayoutPickUp.setVisibility(View.VISIBLE);
             linearLayoutComplete.setVisibility(View.GONE);
-        } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "complete")) {
+        } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
             linearLayoutStart.setVisibility(View.GONE);
             linearLayoutPickUp.setVisibility(View.GONE);
             linearLayoutComplete.setVisibility(View.GONE);
