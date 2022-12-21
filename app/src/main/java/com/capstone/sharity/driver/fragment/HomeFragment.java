@@ -60,6 +60,11 @@ public class HomeFragment extends Fragment {
 
         //Initialize ViewModel
         driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
+        driverViewModel.getDriverDetails();
+        driverViewModel.setAvailability();
+        driverViewModel.subscribeUpdates();
+        driverViewModel.getTasks();
+        driverViewModel.getTasksHistory();
 
         //Toolbar
         materialToolbar.inflateMenu(R.menu.main_toolbar_menu);
