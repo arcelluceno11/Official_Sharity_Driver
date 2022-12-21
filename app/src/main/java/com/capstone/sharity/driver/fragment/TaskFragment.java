@@ -130,46 +130,47 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         //Initialize ViewModel
         driverViewModel = new ViewModelProvider(requireActivity()).get(DriverViewModel.class);
 
-        //Check Status
-        if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "assigned")){
-            linearLayoutStart.setVisibility(View.VISIBLE);
-            linearLayoutPickUp.setVisibility(View.GONE);
-            linearLayoutComplete.setVisibility(View.GONE);
-        }
-
         //Get Task Details
         if(Objects.equals(driverViewModel.taskSelected.getValue().getType(), "1")){
-            //Check if PickUp is Complete
-            if(driverViewModel.taskSelected.getValue().getPickUp().isComplete()) {
-                linearLayoutStart.setVisibility(View.GONE);
-                linearLayoutPickUp.setVisibility(View.GONE);
-                linearLayoutComplete.setVisibility(View.VISIBLE);
-            } else {
-                linearLayoutStart.setVisibility(View.GONE);
-                linearLayoutPickUp.setVisibility(View.VISIBLE);
-                linearLayoutComplete.setVisibility(View.GONE);
-            }
-            //Check if Task is Complete
-            if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
-                linearLayoutStart.setVisibility(View.GONE);
+            if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "assigned")){
+                linearLayoutStart.setVisibility(View.VISIBLE);
                 linearLayoutPickUp.setVisibility(View.GONE);
                 linearLayoutComplete.setVisibility(View.GONE);
+            } else if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "in_progress")){
+                if(driverViewModel.taskSelected.getValue().getPickUp().isComplete()) {
+                    linearLayoutStart.setVisibility(View.GONE);
+                    linearLayoutPickUp.setVisibility(View.GONE);
+                    linearLayoutComplete.setVisibility(View.VISIBLE);
+                } else {
+                    linearLayoutStart.setVisibility(View.GONE);
+                    linearLayoutPickUp.setVisibility(View.VISIBLE);
+                    linearLayoutComplete.setVisibility(View.GONE);
+                }
+            } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
+                linearLayoutComplete.setVisibility(View.GONE);
             }
+
             //Assign Values
             customer = driverViewModel.taskSelected.getValue().getPickUp().getCustomer();
             address = driverViewModel.taskSelected.getValue().getPickUp().getAddress();
             longitude = driverViewModel.taskSelected.getValue().getPickUp().getLatLongs().get(0);
             latitude = driverViewModel.taskSelected.getValue().getPickUp().getLatLongs().get(1);
         } else {
-            //Check if Task is Complete
-            if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
-                linearLayoutStart.setVisibility(View.GONE);
+            //Check Status
+            if(Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "assigned")){
+                linearLayoutStart.setVisibility(View.VISIBLE);
                 linearLayoutPickUp.setVisibility(View.GONE);
                 linearLayoutComplete.setVisibility(View.GONE);
-            } else {
+            } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "in_progress")){
                 linearLayoutStart.setVisibility(View.GONE);
                 linearLayoutPickUp.setVisibility(View.GONE);
                 linearLayoutComplete.setVisibility(View.VISIBLE);
+            } else if (Objects.equals(driverViewModel.taskSelected.getValue().getStatus(), "completed")) {
+                linearLayoutStart.setVisibility(View.GONE);
+                linearLayoutPickUp.setVisibility(View.GONE);
+                linearLayoutComplete.setVisibility(View.GONE);
             }
             //Assign Values
             customer = driverViewModel.taskSelected.getValue().getDrop().getCustomer();

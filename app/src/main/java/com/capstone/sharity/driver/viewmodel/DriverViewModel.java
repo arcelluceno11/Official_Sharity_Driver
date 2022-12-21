@@ -1,33 +1,20 @@
 package com.capstone.sharity.driver.viewmodel;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Notification;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 
-import com.capstone.sharity.driver.fragment.LoginFragmentDirections;
+import com.capstone.sharity.driver.activity.MainActivity;
 import com.capstone.sharity.driver.model.Driver;
 import com.capstone.sharity.driver.repository.Firebase;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,7 +24,6 @@ import io.teliver.sdk.core.EventListener;
 import io.teliver.sdk.core.TLog;
 import io.teliver.sdk.core.TaskListListener;
 import io.teliver.sdk.core.Teliver;
-import io.teliver.sdk.models.PushData;
 import io.teliver.sdk.models.Task;
 import io.teliver.sdk.models.TripBuilder;
 
@@ -282,9 +268,5 @@ public class DriverViewModel extends ViewModel {
     public void subscribeUpdates(){
         FirebaseMessaging.getInstance().subscribeToTopic(driverCode.getValue());
         Log.d("Log Debug:", "Driver Subscribed To Topic: " + driverCode.getValue().toString());
-    }
-    public void unsubscribeUpdates(){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(driverCode.getValue());
-        Log.d("Log Debug:", "Driver Unsubscribed To Topic: " + driverCode.getValue().toString());
     }
 }

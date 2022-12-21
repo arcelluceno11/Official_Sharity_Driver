@@ -2,6 +2,7 @@ package com.capstone.sharity.driver.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -20,17 +21,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.capstone.sharity.driver.R;
 import com.capstone.sharity.driver.model.Driver;
 import com.capstone.sharity.driver.viewmodel.DriverViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.util.Objects;
+import io.teliver.sdk.core.Teliver;
 
 public class AccountFragment extends Fragment {
 
@@ -93,12 +91,12 @@ public class AccountFragment extends Fragment {
                 editor.clear();
                 editor.apply();
 
-                //Set Driver Availability
-                driverViewModel.unsubscribeUpdates();
+                Teliver.unregisterUser();
 
-                //Navigate
-                NavDirections action = AccountFragmentDirections.actionAccountFragmentToLoginFragment2();
-                Navigation.findNavController(view).navigate(action);
+                //Restart Activity
+                Intent intent = requireActivity().getIntent();
+                requireActivity().finish();
+                startActivity(intent);
             }
         });
     }
