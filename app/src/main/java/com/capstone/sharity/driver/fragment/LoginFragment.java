@@ -118,6 +118,12 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
 
+                if(editTextLoginCode.getText().toString().equals("")){
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(requireContext(), "Code is Empty!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Firebase.getDatabaseReference()
                         .child("Drivers")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -161,6 +167,7 @@ public class LoginFragment extends Fragment {
                                     Navigation.findNavController(view).navigate(action);
 
                                 } else {
+                                    progressBar.setVisibility(View.GONE);
                                     Toast.makeText(requireContext(), "Code doesn't exist!", Toast.LENGTH_SHORT).show();
                                 }
                             }

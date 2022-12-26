@@ -87,7 +87,7 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:ems="10"
-                    android:inputType="textPassword"
+                    android:inputType="numberPassword"
                     tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
             </com.google.android.material.textfield.TextInputLayout>
 

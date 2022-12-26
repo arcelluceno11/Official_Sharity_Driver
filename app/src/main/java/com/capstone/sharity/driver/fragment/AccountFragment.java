@@ -75,7 +75,7 @@ public class AccountFragment extends Fragment {
             @Override
             public void onChanged(Driver driver) {
                 textViewCode.setText(driver.getCode());
-                textViewName.setText(driver.getFirstName() + " " + driverViewModel.driver.getValue().getMiddleName() + " " + driverViewModel.driver.getValue().getLastName());
+                textViewName.setText(driver.getFirstName() + " " + (driver.getMiddleName() == null ? "" : driver.getMiddleName()) + " " + driver.getLastName());
                 textViewPhoneNum.setText(driver.getPhone());
                 textViewEmailAddress.setText(driver.getEmail());
             }

@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.capstone.sharity.driver'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.capstone.sharity.driver"
         minSdk 28
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -62,4 +62,10 @@ dependencies {
 
     //Swipe Button
     implementation 'com.github.mhdmoh:swipe-button:1.0.3'
+
+    //PermissionX
+    implementation 'com.guolindev.permissionx:permissionx:1.7.1'
+
+    //ReactNetwork
+    implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
 }
