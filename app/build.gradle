@@ -68,4 +68,10 @@ dependencies {
 
     //ReactNetwork
     implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
+
+    //Material Dialog Library
+    implementation 'dev.shreyaspatil.MaterialDialog:MaterialDialog:2.2.3'
+
+    //LottieAnimation
+    implementation "com.airbnb.android:lottie:3.4.0"
 }

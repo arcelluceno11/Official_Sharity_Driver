@@ -9,7 +9,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.StrictMode;
 
@@ -25,6 +24,10 @@ import com.permissionx.guolindev.request.ForwardScope;
 
 import java.util.List;
 
+import dev.shreyaspatil.MaterialDialog.AbstractDialog;
+import dev.shreyaspatil.MaterialDialog.MaterialDialog;
+import dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
+import dev.shreyaspatil.MaterialDialog.model.TextAlignment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -35,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
     //Variables
     DriverViewModel driverViewModel;
     Disposable internetDisposable;
-    AlertDialog alertDialog;
+    MaterialDialog alertDialog;
 
+    @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
         PermissionX.init(this)
                 .permissions(
                         Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.POST_NOTIFICATIONS
                 )
                 .explainReasonBeforeRequest()
                 .onExplainRequestReason(new ExplainReasonCallback() {
@@ -72,17 +77,17 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         //Check Internet
-        alertDialog = new AlertDialog.Builder(this).setMessage("No Internet Connection")
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        onResume();
-                    }
-                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+        alertDialog = new MaterialDialog.Builder(this)
+                .setTitle("No Internet Connection", TextAlignment.CENTER)
+                .setMessage("Make sure you're connected to Wi-Fi or Mobile Data")
+                .setCancelable(false)
+                .setAnimation(R.raw.no_internet)
+                .setPositiveButton("Retry", new AbstractDialog.OnClickListener() {
                     @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        onResume();
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        onResume();;
                     }
-                }).create();
+                }).build();
 
         //IDK WHAT'S THIS
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
