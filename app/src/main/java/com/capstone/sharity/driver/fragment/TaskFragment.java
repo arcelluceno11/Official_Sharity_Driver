@@ -80,7 +80,6 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
     //Variables
     DriverViewModel driverViewModel;
     MapView mapView;
-    Location lastKnownLocation;
     FusedLocationProviderClient fusedLocationClient;
     Customer customer;
     String address;
@@ -127,6 +126,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
+        fusedLocationClient =LocationServices.getFusedLocationProviderClient(requireActivity());
 
         //Initialize Widgets
         cardViewButtons = view.findViewById(R.id.cardViewButtons);
@@ -299,39 +299,29 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),15));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(address));
 
-        fusedLocationClient =LocationServices.getFusedLocationProviderClient(requireActivity());
-        Task<Location> locationResult = fusedLocationClient.getLastLocation();
-        locationResult.addOnCompleteListener(new OnCompleteListener<Location>() {
+        fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
             @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    // Set the map's camera position to the current location of the device.
-                    lastKnownLocation = task.getResult();
-                    if (lastKnownLocation != null) {
-                        //Current Location
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude),15));
+            public void onSuccess(Location location) {
+                if(location != null){
+                    //Task Location
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                            new CameraPosition.Builder()
+                                    .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                                    .zoom(15)
+                                    .bearing(90)
+                                    .tilt(30)
+                                    .build()));
 
-                        //Task Location
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
-                                new CameraPosition.Builder()
-                                        .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                                        .zoom(15)
-                                        .bearing(90)
-                                        .tilt(30)
-                                        .build()));
+                    // Getting URL to the Google Directions API
+                    String url = getDirectionsUrl(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(latitude, longitude));
 
-                        //Add Marker
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(address));
+                    DownloadTask downloadTask = new DownloadTask();
 
-                        // Getting URL to the Google Directions API
-                        String url = getDirectionsUrl(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), new LatLng(latitude, longitude));
-
-                        DownloadTask downloadTask = new DownloadTask();
-
-                        // Start downloading json data from Google Directions API
-                        downloadTask.execute(url);
-                    }
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
                 }
             }
         });
@@ -410,7 +400,7 @@ public class TaskFragment extends Fragment implements OnMapReadyCallback {
                 }
 
                 lineOptions.addAll(points);
-                lineOptions.width(8);
+                lineOptions.width(12);
                 lineOptions.color(ResourcesCompat.getColor(getResources(), R.color.md_theme_light_primary, null));
                 lineOptions.geodesic(true);
 
